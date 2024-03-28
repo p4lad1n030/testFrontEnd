@@ -1,0 +1,81 @@
+comece instalando as lib de test no seu projeto:
+- npm i @testing-library/jest-dom -d 
+após siga instalando:
+- npm i @testing-library/react -d
+- npm i @testing-library/user-event -d 
+- npm i @vitest/coverage-v8 -d 
+- npm i jsdom -d
+- npm i vitest -d
+- npm i path -d 
+
+Após installar esta cacetada de libs pra testes crie e configure o seguinte arquivo: vitest.config.ts:
+/// <reference types="vitest" />
+
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import * as path from 'path';
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  test: {
+    globals: true,
+    environment:"jsdom",
+    setupFiles: [],
+  },
+  resolve: {
+    alias: [{find: "@", replacement: path.resolve(__dirname, "/src")}]
+  }
+})
+
+depois crie um arquivo dentro de src, chamado vitest-env.d.ts e cole
+/// <reference types="vitest/globals"/>
+
+depois dentro de src crie um arquivo chamado setupTests.ts e dentro coloque:
+import '@testing-library/jest-dom';
+
+e depois volte em vitest.config.ts e dentro de setupFiles coloque:
+/// <reference types="vitest" />
+
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import * as path from 'path';
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  test: {
+    globals: true,
+    environment:"jsdom",
+    setupFiles: ["./src/setupTests.ts"],
+  },
+  resolve: {
+    alias: [{find: "@", replacement: path.resolve(__dirname, "/src")}]
+  }
+})
+
+Agora dentro de package.json, dentro de scripts adicione:
+"test": "vitest",
+    "test:coverage":"vitest run --coverage"
+
+Feito tudo isto podemos começar a escrever o nosso primeiro test iniciando no arquivo de entrada do react o app.tsx e deixe assim:
+
+import './App.css'
+
+function App() {
+
+  return (
+    <>
+      <div>
+        <h1 className="">Hello Test</h1>
+      </div>
+    </>
+  )
+}
+
+export default App
+
+depois crie um arquivo dentro de src chamado App.spec.tsx e começaremos a escrever nossos testes por la
+-- uma observação neste caso só temos o app.tsx por isso o arquivo App.spec.tsx começa com app e boa pratica colocar: o-nome-do-arquivo-testado.spec.tsx
+
+** se o novo arquivo de teste não reconehcer os testes crie um arquivo chamado: vitest-env.d.ts dentro da pasta src e cole dentro: /// <reference types="vitest/globals"/>
